@@ -1,0 +1,9 @@
+[submodule "auth-service"]
+	path = auth-service
+	url = git@github.com:Sukhacoder02/auth-service.git
+[submodule "backend-dday"]
+	path = backend-dday
+	url = git@github.com:Sukhacoder02/backend-dday.git
+[submodule "frontend-dday"]
+	path = frontend-dday
+	url = git@github.com:Sukhacoder02/frontend-dday.git
