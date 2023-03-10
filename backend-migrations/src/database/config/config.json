@@ -1,0 +1,30 @@
+{
+  "development": {
+    "username": "admin",
+    "password": "password",
+    "database": "cms",
+    "host": "dbbackend",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "password",
+    "database": "postgres",
+    "host": "dbbackend",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "dbbackend",
+    "dialect": "postgres"
+  },
+  "docker": {
+    "username": "postgres",
+    "password": "password",
+    "database": "postgres",
+    "host": "dbbackend",
+    "dialect": "postgres"
+  }
+}
