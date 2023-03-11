@@ -78,3 +78,11 @@ services:
       - ./backend-dday/:/app/
     environment:
       - NODE_ENV=docker
+
+  frontend:
+    build: ./frontend-dday
+    restart: always
+    ports:
+      - '3333:3333'
+    volumes:
+      - ./frontend-dday/:/app/
