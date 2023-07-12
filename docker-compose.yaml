@@ -21,7 +21,7 @@ services:
     image: redis:latest
     restart: always
     ports:
-      - '6380:6379'
+      - '6379:6379'
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
@@ -31,50 +31,55 @@ services:
   auth:
     build: ./auth-service
     depends_on:
-      - redis
+      dbauth:
+        condition: service_healthy
+      redis:
+        condition: service_started
     restart: always
     ports:
       - '1111:1111'
+    env_file:
+      - ./auth-service/.env
 
-  auth-migration:
-    build: ./auth-migrations
-    depends_on:
-      dbauth:
-        condition: service_healthy
+  # auth-migration:
+  #   build: ./auth-migrations
+  #   depends_on:
+  #     dbauth:
+  #       condition: service_healthy
 
-  dbbackend:
-    image: postgres:latest
-    restart: always
-    ports:
-      - '5434:5432'
-    environment:
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-    volumes:
-      - ./backend-dday/src/database/data:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD', 'pg_isready', '-U', 'postgres']
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  # dbbackend:
+  #   image: postgres:latest
+  #   restart: always
+  #   ports:
+  #     - '5434:5432'
+  #   environment:
+  #     - POSTGRES_PASSWORD=password
+  #     - POSTGRES_DB=postgres
+  #     - POSTGRES_USER=postgres
+  #   volumes:
+  #     - ./backend-dday/src/database/data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ['CMD', 'pg_isready', '-U', 'postgres']
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
 
-  backend-migration:
-    build: ./backend-migrations
-    depends_on:
-      dbbackend:
-        condition: service_healthy
-    environment:
-      - NODE_ENV=docker
+  # backend-migration:
+  #   build: ./backend-migrations
+  #   depends_on:
+  #     dbbackend:
+  #       condition: service_healthy
+  #   environment:
+  #     - NODE_ENV=docker
 
-  backend:
-    build: ./backend-dday
-    depends_on:
-      - backend-migration
-    restart: always
-    ports:
-      - '2222:2222'
-    volumes:
-      - ./backend-dday/:/app/
-    environment:
-      - NODE_ENV=docker
+  # backend:
+  #   build: ./backend-dday
+  #   depends_on:
+  #     - backend-migration
+  #   restart: always
+  #   ports:
+  #     - '2222:2222'
+  #   volumes:
+  #     - ./backend-dday/:/app/
+  #   environment:
+  #     - NODE_ENV=docker
