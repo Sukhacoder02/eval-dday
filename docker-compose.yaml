@@ -41,28 +41,22 @@ services:
     env_file:
       - ./auth-service/.env
 
-  # auth-migration:
-  #   build: ./auth-migrations
-  #   depends_on:
-  #     dbauth:
-  #       condition: service_healthy
-
-  # dbbackend:
-  #   image: postgres:latest
-  #   restart: always
-  #   ports:
-  #     - '5434:5432'
-  #   environment:
-  #     - POSTGRES_PASSWORD=password
-  #     - POSTGRES_DB=postgres
-  #     - POSTGRES_USER=postgres
-  #   volumes:
-  #     - ./backend-dday/src/database/data:/var/lib/postgresql/data
-  #   healthcheck:
-  #     test: ['CMD', 'pg_isready', '-U', 'postgres']
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
+  dbbackend:
+    image: postgres:latest
+    restart: always
+    ports:
+      - '5434:5432'
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+    volumes:
+      - ./backend-dday/src/database/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # backend-migration:
   #   build: ./backend-migrations
@@ -72,14 +66,15 @@ services:
   #   environment:
   #     - NODE_ENV=docker
 
-  # backend:
-  #   build: ./backend-dday
-  #   depends_on:
-  #     - backend-migration
-  #   restart: always
-  #   ports:
-  #     - '2222:2222'
-  #   volumes:
-  #     - ./backend-dday/:/app/
-  #   environment:
-  #     - NODE_ENV=docker
+  backend:
+    build: ./backend-dday
+    depends_on:
+      dbbackend:
+        condition: service_healthy
+    restart: always
+    ports:
+      - '2222:2222'
+    volumes:
+      - ./backend-dday/:/app/
+    env_file:
+      - ./backend-dday/.env.docker
